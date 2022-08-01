@@ -16,6 +16,7 @@ class Game {
 		this.mafiaVotes = 0; // votes for mafia
 		this.successVote = true;
 		this.currentRoundNum = 0;
+		this.numMafia = 0;
 		this.isAllMafia = false;
 		this.settings = {
 			timeLimit: 8, // 8 minutes
@@ -23,10 +24,9 @@ class Game {
 			chanceAllMafiaPercent: 0.2,
 			numberMafia: 1,
 			percentVotesToWin: 0.5,
-			numberMafia: 1,
 			mafiaWinPoints: 3,
 			townGuessPoints: 1,
-			gameWinPoints: 1
+			gameWinPoints: 1,
 		};
 
 		// delete this game if it does not have players after 60 seconds
@@ -102,7 +102,12 @@ class Game {
 
 		player.connected = false;
 
-		if (this.status !== "ingame" && this.status !== "voting" || !player.name) {
+		if (
+			(this.status !== "ingame" &&
+				this.status !== "voting" &&
+				this.status !== "postgame") ||
+			!player.name
+		) {
 			this.deletePlayer(player);
 		}
 
@@ -199,7 +204,12 @@ class Game {
 		);
 
 	checkIfReady = () => {
-		if (this.status === "ingame" || this.status === "voting") return false;
+		if (
+			this.status === "ingame" ||
+			this.status === "voting" ||
+			this.status === "postgame"
+		)
+			return false;
 
 		const everyoneHasName = this.players.reduce(
 			(answer, player) => player.name && answer,
@@ -222,7 +232,8 @@ class Game {
 
 		// console.log(this.settings.chanceAllMafia, this.settings.chanceAllMafiaPercent);
 		if (this.settings.chanceAllMafia) {
-			this.isAllMafia = Math.random() < this.settings.chanceAllMafiaPercent ? true : false;
+			this.isAllMafia =
+				Math.random() < this.settings.chanceAllMafiaPercent ? true : false;
 		} else {
 			this.isAllMafia = false;
 		}
@@ -247,7 +258,7 @@ class Game {
 		this.timePaused = false;
 
 		this.sendNewStateToAllPlayers();
-	}
+	};
 
 	vote = (player, data) => {
 		// data.vote is index of player
@@ -276,22 +287,27 @@ class Game {
 		}
 		// console.log(this.getState());
 		if (this.votes >= this.players.length) {
-			if (this.mafiaVotes >= this.settings.percentVotesToWin * (this.players.length - this.numMafia)) {
+			if (
+				this.mafiaVotes >=
+				this.settings.percentVotesToWin * (this.players.length - this.numMafia)
+			) {
 				this.successVote = true;
+				// console.log("Success vote");
 			} else {
-				this.players.forEach((player) => {
-					if (player.role === "mafia" && !data.win) {
-						player.score += parseInt(this.settings.mafiaWinPoints);
-						player.scoreChange += parseInt(this.settings.mafiaWinPoints);
+				this.players.forEach((p) => {
+					if (p.role === "mafia" && !p.gameWon) {
+						p.score += parseInt(this.settings.mafiaWinPoints);
+						p.scoreChange += parseInt(this.settings.mafiaWinPoints);
 					}
 				});
+				// console.log("Failure vote");
 			}
 
 			this.status = "postgame";
 			this.timeLeft = 15;
 		}
 		this.sendNewStateToAllPlayers();
-	}
+	};
 
 	resetTemps = () => {
 		this.votes = 0;
@@ -301,8 +317,8 @@ class Game {
 		this.removeDisconnectedPlayers();
 		this.players.forEach((p) => {
 			p.reset();
-		})
-	}
+		});
+	};
 
 	endGame = () => {
 		this.status = "lobby-waiting";
@@ -317,15 +333,14 @@ class Game {
 			player.role = "mafia";
 			this.numMafia += 1;
 		});
-	}
+	};
 
 	assignRoles = () => {
-		let numMafia = 0;
-		while (numMafia < this.settings.numberMafia) {
+		while (this.numMafia < this.settings.numberMafia) {
 			const p = this.players[Math.floor(Math.random() * this.players.length)];
 			if (p.role !== "mafia") {
 				p.role = "mafia";
-				numMafia += 1;
+				this.numMafia += 1;
 			}
 		}
 		this.players.forEach((player) => {
@@ -360,12 +375,12 @@ class Game {
 	setPercentVotesToWin = (percentVotesToWin) => {
 		this.settings.percentVotesToWin = percentVotesToWin;
 		this.sendNewStateToAllPlayers();
-	}
+	};
 
 	setNumberMafia = (numberMafia) => {
 		this.settings.numberMafia = numberMafia;
 		this.sendNewStateToAllPlayers();
-	}
+	};
 
 	setChanceAllMafia = (chanceAllMafia) => {
 		this.settings.chanceAllMafia = chanceAllMafia;
