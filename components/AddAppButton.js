@@ -18,8 +18,8 @@ const AddAppButton = () => {
 		// https://stackoverflow.com/a/52695341
 		setIsAlreadyPWA(
 			window.matchMedia("(display-mode: standalone)").matches ||
-			window.navigator.standalone ||
-			document.referrer.includes("android-app://")
+				window.navigator.standalone ||
+				document.referrer.includes("android-app://")
 		);
 
 		setIsiOS(/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream);
@@ -56,7 +56,7 @@ const AddAppButton = () => {
 	return (
 		<>
 			{!isAlreadyPWA && (
-				<button className="btn-small" onClick={handleAddApp}>
+				<button className="btn-small btn-vertical" onClick={handleAddApp}>
 					{isLoading ? "Loading..." : "Add RL Mafia as App"}
 				</button>
 			)}

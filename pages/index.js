@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import BuyMe from "../components/BuyMe";
 
 import { withTranslation } from "../utils/i18n";
 import Loading from "../components/Loading";
@@ -53,7 +54,8 @@ const Home = ({ t, i18n, loading }) => {
 				}}
 			>
 				<h3>{t("ui.welcome to rl mafia")}</h3>
-				<div className="subtitle formerly">forked from Tanner Krewson's{" "}
+				<div className="subtitle formerly">
+					forked from Tanner Krewson's{" "}
 					<a
 						href="https://spyfall.tannerkrewson.com/"
 						target="_blank"
@@ -68,9 +70,7 @@ const Home = ({ t, i18n, loading }) => {
 			{(loading || newGameLoading) && <Loading />}
 			{!loading && (
 				<>
-					<p>
-						nellsux 🤤
-					</p>
+					<p>Hello world.</p>
 					<div className="button-container">
 						<Link href="/join">
 							<button id="btn-join-game" className="btn-large">
@@ -81,8 +81,14 @@ const Home = ({ t, i18n, loading }) => {
 							{t("ui.new game")}
 						</button>
 					</div>
-					<div className="button-container-vertical">
-						<AddAppButton />
+					<div className="extra-buttons-container">
+						<div className="button-container-vertical">
+							<Link href="/how-to-play">
+								<button className="btn-small btn-vertical">How to Play</button>
+							</Link>
+							<AddAppButton />
+						</div>
+						<BuyMe />
 					</div>
 				</>
 			)}

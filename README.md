@@ -8,7 +8,7 @@ Issues, feature requests, and pull requests welcome!
 
 ## Information
 
-I'm using the same README template from Spyfall but to not repeat the same info, you can find the history of Spyfall at Tanner Krewson's [GitHub repository](github.com/tannerkrewson/spyfall).
+I'm using the same README template from Spyfall but to not repeat the same info, you can find the history of Spyfall at Tanner Krewson's [GitHub repository](https://github.com/tannerkrewson/spyfall).
 
 This is **NOT**, I repeat, **NOT** Spyfall. This is Rocket League Mafia, shortened to RL Mafia. This game involves one player in a Rocket League lobby as the Mafia. All other players are town (villagers, normies, whatever you want to call them).
 
